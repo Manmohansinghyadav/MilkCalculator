@@ -6,30 +6,45 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 30px;
+      margin: 0;
       background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      max-width: 600px;
+      width: 100%;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     h1 {
       color: #333;
       text-align: center;
+      margin-bottom: 20px;
     }
 
     label {
-      margin-top: 20px;
+      margin-top: 15px;
       display: block;
       font-weight: bold;
     }
 
     input[type="text"],
     input[type="number"] {
-      width: calc(100% - 22px);
+      width: 100%;
       padding: 10px;
-      margin: 10px 0;
+      margin: 8px 0;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 16px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .entry {
@@ -37,6 +52,12 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .entry input {
+      flex: 1;
+      min-width: 100px;
     }
 
     button {
@@ -44,68 +65,103 @@
       background-color: #28a745;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 16px;
       margin-top: 10px;
-      transition: background-color 0.3s;
-      width: 100%;
+      transition: background-color 0.3s, transform 0.2s;
     }
 
     button:hover {
       background-color: #218838;
+      transform: translateY(-2px);
+    }
+
+    .removeBtn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .removeBtn:hover {
+      background-color: #c82333;
     }
 
     .summary {
-      margin-top: 30px;
-      background: #fff;
+      margin-top: 25px;
+      background: #fafafa;
       padding: 15px;
-      border-radius: 6px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     }
 
-    .error {
-      color: red;
+    .summary h2 {
+      margin-top: 0;
       text-align: center;
+      color: #444;
+    }
+
+    .summary ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .summary li {
+      padding: 6px 0;
+      border-bottom: 1px dashed #ddd;
+    }
+
+    .summary p {
+      font-weight: bold;
+      text-align: center;
+      margin: 10px 0;
     }
 
     @media (max-width: 600px) {
-      body {
-        margin: 15px;
+      .entry {
+        flex-direction: column;
+        align-items: stretch;
       }
 
-      button {
-        margin-top: 5px;
+      .removeBtn {
+        align-self: flex-end;
       }
     }
   </style>
 </head>
 <body>
 
-  <h1>Milk Calculator</h1>
+  <div class="container">
+    <h1>Milk Calculator</h1>
 
-  <form id="milkForm">
-    <label for="month">Month:</label>
-    <input type="text" id="month" name="month" placeholder="e.g., August 2025" required>
+    <form id="milkForm">
+      <label for="month">Month:</label>
+      <input type="text" id="month" name="month" placeholder="e.g., August 2025" required>
 
-    <label for="amount">Rate per KG (₹):</label>
-    <input type="number" id="amount" name="amount" step="0.01" required>
+      <label for="amount">Rate per KG (₹):</label>
+      <input type="number" id="amount" name="amount" step="0.01" required>
 
-    <div id="entryFields">
-      <div class="entry">
-        <input type="text" placeholder="Day (e.g., 1 or 1-16)" class="dayInput" required>
-        <input type="number" placeholder="KG (e.g., 1.5)" class="kgInput" step="0.1" required>
+      <div id="entryFields">
+        <div class="entry">
+          <input type="text" placeholder="Day (e.g., 1 or 1-16)" class="dayInput" required>
+          <input type="number" placeholder="KG (e.g., 1.5)" class="kgInput" step="0.1" required>
+          <button type="button" class="removeBtn" onclick="removeEntry(this)">❌</button>
+        </div>
       </div>
-    </div>
 
-    <button type="button" onclick="addEntryField()">Add More</button>
-    <button type="submit">Calculate</button>
-  </form>
+      <button type="button" onclick="addEntryField()">+ Add More</button>
+      <button type="submit">Calculate</button>
+    </form>
 
-  <div id="output" class="summary" style="display: none;"></div>
+    <div id="output" class="summary" style="display: none;"></div>
+  </div>
 
   <script>
-
     function addEntryField() {
       const container = document.getElementById('entryFields');
       const div = document.createElement('div');
@@ -113,8 +169,19 @@
       div.innerHTML = `
         <input type="text" placeholder="Day (e.g., 1 or 1-16)" class="dayInput" required>
         <input type="number" placeholder="KG (e.g., 1.5)" class="kgInput" step="0.1" required>
+        <button type="button" class="removeBtn" onclick="removeEntry(this)">❌</button>
       `;
       container.appendChild(div);
+    }
+
+    function removeEntry(button) {
+      const entryDiv = button.parentNode;
+      const container = document.getElementById('entryFields');
+      if (container.children.length > 1) {
+        entryDiv.remove();
+      } else {
+        alert("At least one entry is required!");
+      }
     }
 
     document.getElementById('milkForm').addEventListener('submit', function (e) {
@@ -162,8 +229,8 @@
       });
 
       const totalAmount = totalKg * rate;
-      summaryHTML += `</ul><p><strong>Total Milk:</strong> ${totalKg.toFixed(2)} kg</p>`;
-      summaryHTML += `<p><strong>Total Amount:</strong> ₹${totalAmount.toFixed(2)}</p>`;
+      summaryHTML += `</ul><p>Total Milk: ${totalKg.toFixed(2)} kg</p>`;
+      summaryHTML += `<p>Total Amount: ₹${totalAmount.toFixed(2)}</p>`;
 
       const output = document.getElementById('output');
       output.innerHTML = summaryHTML;
