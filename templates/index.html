@@ -125,6 +125,18 @@
       margin: 10px 0;
     }
 
+    /* Screenshot button */
+    .screenshot-btn {
+      display: none;
+      width: 100%;
+      background: #007bff;
+      margin-top: 15px;
+    }
+
+    .screenshot-btn:hover {
+      background: #0056b3;
+    }
+
     /* Footer */
     .footer {
       background: #222;
@@ -187,6 +199,7 @@
     </form>
 
     <div id="output" class="summary" style="display: none;"></div>
+    <button id="screenshotBtn" class="screenshot-btn">📸 Save as Image</button>
   </div>
 
   <!-- Footer -->
@@ -197,6 +210,9 @@
       <a href="https://www.instagram.com/manmohan_yadav10/" target="_blank"><i class="fab fa-instagram"></i></a>
     </p>
   </div>
+
+  <!-- html2canvas CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
     function addEntryField() {
@@ -272,6 +288,20 @@
       const output = document.getElementById('output');
       output.innerHTML = summaryHTML;
       output.style.display = 'block';
+
+      // Show screenshot button
+      document.getElementById('screenshotBtn').style.display = "block";
+    });
+
+    // Screenshot function
+    document.getElementById('screenshotBtn').addEventListener('click', function () {
+      const output = document.getElementById('output');
+      html2canvas(output).then(canvas => {
+        const link = document.createElement('a');
+        link.download = "milk-summary.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
     });
   </script>
 
